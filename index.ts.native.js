@@ -1,7 +1,6 @@
-export {
-  default as WebViewLeaflet,
-  WebViewLeafletProps
-} from "./WebViewLeaflet";
+import ReactNativeLeaflet from "./WebViewLeaflet";
+export default ReactNativeLeaflet;
+export { WebViewLeafletProps } from "./WebViewLeaflet";
 export {
   LatLng,
   Point,

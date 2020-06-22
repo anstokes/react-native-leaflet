@@ -1,9 +1,0 @@
-{
-  "name": "react-native-leaflet-web",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "react-leaflet-markercluster": "^2.0.0"
-  }
-}
