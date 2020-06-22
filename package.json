@@ -27,6 +27,8 @@
     "lodash.isequal": "^4.5.0",
     "react-dom": "^16.10.2",
     "react-leaflet": "^2.6.1",
+    "react-leaflet-markercluster": "^2.0.0",
+    "react-measure": "^2.3.0",
     "react-native-webview": "^8.0.3"
   },
   "peerDependencies": {
