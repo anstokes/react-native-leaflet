@@ -88,6 +88,7 @@ export interface MapEventMessage {
 }
 
 export interface MapLayer {
+  key?: string;
   attribution?: string;
   baseLayer?: boolean;
   baseLayerIsChecked?: boolean;
@@ -119,6 +120,12 @@ export interface MapStartupMessage {
   mapCenterPosition?: LatLng;
   ownPositionMarker?: OwnPositionMarker;
   zoom?: number;
+  // Additional properties
+  dragging?: boolean;
+  doubleClickZoom?: boolean;
+  scrollWheelZoom?: boolean;
+  touchZoom?: boolean;
+  zoomControl?: boolean;
 }
 
 export type WebviewLeafletMessagePayload = {

@@ -1,40 +1,29 @@
 {
-  "name": "html",
-  "version": "0.1.0",
-  "private": true,
+  "name": "react-native-leaflet-web",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^24.0.0",
-    "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-leaflet": "^2.5.0",
     "@types/react-leaflet-markercluster": "^2.0.0",
-    "@types/react-measure": "^2.0.5",
+    "@types/react-measure": "^2.0.5",  
     "leaflet": "^1.6.0",
     "leaflet.markercluster": "^1.4.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-leaflet": "^2.6.1",
-    "react-leaflet-markercluster": "^2.0.0-rc3",
+    "react-leaflet-markercluster": "^2.0.0",
     "react-measure": "^2.3.0",
     "react-scripts": "3.3.0",
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "cleanAssets": "del-cli --force ../assets/**/*",
     "copyDist": "npx copyfiles -u 1 ./dist/index.html ../assets",
-    "dist": "gulp disableBrowserTestFlag && yarn build && gulp build && yarn cleanAssets && yarn copyDist && gulp enableBrowserTestFlag",
-    "cpx": "cpx '../models.ts' ./src --watch"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "distTest": "gulp disableBrowserTestFlag && yarn build && gulp build && yarn cleanAssets && yarn copyDist && gulp enableBrowserTestFlag",
+	"dist": "yarn build && gulp build && yarn cleanAssets && yarn copyDist"
   },
   "browserslist": {
     "production": [

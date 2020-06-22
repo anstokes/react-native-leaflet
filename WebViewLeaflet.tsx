@@ -34,6 +34,11 @@ export interface WebViewLeafletProps {
   mapCenterPosition?: LatLng;
   ownPositionMarker?: OwnPositionMarker;
   zoom?: number;
+  dragging?: boolean;
+  doubleClickZoom?: boolean;
+  scrollWheelZoom?: boolean;
+  touchZoom?: boolean;
+  zoomControl?: boolean;  
 }
 
 interface State {
@@ -94,7 +99,12 @@ class WebViewLeaflet extends React.Component<WebViewLeafletProps, State> {
       mapLayers,
       mapShapes,
       ownPositionMarker,
-      zoom
+      zoom,
+	  dragging,
+	  doubleClickZoom,
+	  scrollWheelZoom,
+	  touchZoom,
+	  zoomControl
     } = this.props;
 
     if (!prevState.webviewContent && webviewContent) {
@@ -118,6 +128,21 @@ class WebViewLeaflet extends React.Component<WebViewLeafletProps, State> {
     if (zoom !== prevProps.zoom) {
       this.sendMessage({ zoom });
     }
+    if (dragging !== prevProps.dragging) {
+      this.sendMessage({ dragging });
+    }
+    if (doubleClickZoom !== prevProps.doubleClickZoom) {
+      this.sendMessage({ doubleClickZoom });
+    }
+    if (scrollWheelZoom !== prevProps.scrollWheelZoom) {
+      this.sendMessage({ scrollWheelZoom });
+    }
+    if (touchZoom !== prevProps.touchZoom) {
+      this.sendMessage({ touchZoom });
+    }
+    if (zoomControl !== prevProps.zoomControl) {
+      this.sendMessage({ zoomControl });
+    }	
   };
 
   private setMapCenterPosition = () => {
@@ -169,7 +194,13 @@ class WebViewLeaflet extends React.Component<WebViewLeafletProps, State> {
       mapShapes,
       mapCenterPosition,
       ownPositionMarker,
-      zoom = 7
+      zoom = 7,
+	  // Additional properties
+	  dragging,
+	  doubleClickZoom,
+	  scrollWheelZoom,
+	  touchZoom,
+	  zoomControl	  
     } = this.props;
     if (mapLayers) {
       startupMessage.mapLayers = mapLayers;
@@ -191,6 +222,13 @@ class WebViewLeaflet extends React.Component<WebViewLeafletProps, State> {
     }
 
     startupMessage.zoom = zoom;
+	
+	// Additional properties
+	startupMessage.dragging = dragging;
+	startupMessage.doubleClickZoom = doubleClickZoom;
+	startupMessage.scrollWheelZoom = scrollWheelZoom;
+	startupMessage.touchZoom = touchZoom;
+	startupMessage.zoomControl = zoomControl;
 
     this.setState({ isLoading: false });
     this.updateDebugMessages("sending startup message");

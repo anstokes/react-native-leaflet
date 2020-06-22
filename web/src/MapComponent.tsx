@@ -25,7 +25,7 @@ import "./styles/markerAnimations.css";
 import { LatLng } from "react-leaflet";
 
 export const SHOW_DEBUG_INFORMATION = false;
-const ENABLE_BROWSER_TESTING = true;
+const ENABLE_BROWSER_TESTING = false;
 
 interface State {
   debugMessages: string[];
@@ -38,22 +38,38 @@ interface State {
   ownPositionMarker: MapMarker;
   mapRef: any;
   zoom: number;
+  // Additional properties
+  dragging: boolean;
+  doubleClickZoom: boolean;
+  scrollWheelZoom: boolean;
+  touchZoom: boolean;
+  zoomControl: boolean;
+  // onMessageReceived
+  onMessageReceived: any;
 }
 
 export default class MapComponent extends Component<{}, State> {
-  constructor(props: {}) {
+  constructor(props: any) {
     super(props);
     this.state = {
       debugMessages: ["test"],
       isFromNative: false,
       isMobile: null,
-      mapCenterPosition: { lat: 36.56, lng: -76.17 },
-      mapLayers: [],
-      mapMarkers: [],
-      mapShapes: [],
+      mapCenterPosition: props.mapCenterPosition ?? { lat: 36.56, lng: -76.17 },
+      mapLayers: props.mapLayers ?? [],
+      mapMarkers: props.mapMarkers ?? [],
+      mapShapes: props.mapShapes ?? [],
       mapRef: null,
       ownPositionMarker: null,
-      zoom: 6
+      zoom: props.zoom ?? 6,
+      // Additional properties; enabled by default
+      dragging: props.dragging ?? true,
+      doubleClickZoom: props.doubleClickZoom ?? true,
+      scrollWheelZoom: props.scrollWheelZoom ?? true,
+      touchZoom: props.touchZoom ?? true,
+      zoomControl: props.zoomControl ?? true,
+	  // onMessageReceived
+	  onMessageReceived: props.onMessageReceived ?? null
     };
   }
 
@@ -129,6 +145,13 @@ export default class MapComponent extends Component<{}, State> {
           event.data.mapCenterPosition.lng
         ]);
       }
+	  if (typeof event.data.zoomControl !== undefined) {
+        if (event.data.zoomControl) {
+		  this.state.mapRef.leafletElement.addControl( this.state.mapRef.leafletElement.zoomControl );
+		} else {
+		  this.state.mapRef.leafletElement.removeControl( this.state.mapRef.leafletElement.zoomControl );
+		}
+      }
       this.setState({ ...this.state, ...event.data });
     } catch (error) {
       this.addDebugMessage({ error: JSON.stringify(error) });
@@ -182,6 +205,9 @@ export default class MapComponent extends Component<{}, State> {
         zoom: this.state.mapRef.leafletElement?.getZoom()
       };
     }
+	if (typeof this.state.onMessageReceived === 'function') {
+	  this.state.onMessageReceived({ event: webViewLeafletEvent, payload });	
+	}
     this.sendMessage({ event: webViewLeafletEvent, payload });
   };
 
@@ -199,7 +225,12 @@ export default class MapComponent extends Component<{}, State> {
       mapMarkers,
       mapShapes,
       ownPositionMarker,
-      zoom
+      zoom,
+	  dragging,
+	  doubleClickZoom,
+	  scrollWheelZoom,
+	  touchZoom,
+	  zoomControl
     } = this.state;
     return (
       <MapComponentView
@@ -213,6 +244,11 @@ export default class MapComponent extends Component<{}, State> {
         ownPositionMarker={ownPositionMarker}
         setMapRef={this.setMapRef}
         zoom={zoom}
+		dragging={dragging}
+		doubleClickZoom={doubleClickZoom}
+		scrollWheelZoom={scrollWheelZoom}
+		touchZoom={touchZoom}
+		zoomControl={this.state.zoomControl}
       />
     );
   }

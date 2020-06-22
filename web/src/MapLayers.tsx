@@ -1,12 +1,12 @@
 import * as React from "react";
 import {
-  TileLayer,
   LayersControl,
-  WMSTileLayer,
-  WMSTileLayerProps,
-  TileLayerProps,
   ImageOverlay,
-  ImageOverlayProps
+  ImageOverlayProps,
+  TileLayer,
+  TileLayerProps,
+  WMSTileLayer,
+  WMSTileLayerProps
 } from "react-leaflet";
 import { MapLayer, MapLayerType } from "./models";
 
@@ -32,6 +32,7 @@ class MapLayers extends React.Component<MapLayersProps> {
     const { mapLayers } = this.props;
     return mapLayers.map(
       (layer: MapLayer, index: number): JSX.Element => {
+		var thisLayer = this.Layer({key: `layer-${index}`, ...layer});
         if (layer.baseLayerName && mapLayers.length > 1) {
           return (
             <BaseLayer
@@ -39,11 +40,11 @@ class MapLayers extends React.Component<MapLayersProps> {
               checked={layer.baseLayerIsChecked ?? false}
               name={layer.baseLayerName || `Layer.${index}`}
             >
-              <this.Layer {...layer} />
+				{thisLayer}
             </BaseLayer>
           );
         }
-        return <this.Layer key={`layer-${index}`} {...layer} />;
+		return thisLayer;
       }
     );
   };

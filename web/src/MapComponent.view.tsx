@@ -20,6 +20,12 @@ interface MapComponentViewProps {
   ownPositionMarker: MapMarker;
   setMapRef: (mapRef: any) => void;
   zoom: number;
+  // Additional properties
+  dragging: boolean;
+  doubleClickZoom: boolean;
+  scrollWheelZoom: boolean;
+  touchZoom: boolean;
+  zoomControl: boolean;  
 }
 
 const MapComponentView: React.FC<MapComponentViewProps> = ({
@@ -32,7 +38,13 @@ const MapComponentView: React.FC<MapComponentViewProps> = ({
   onMapEvent,
   ownPositionMarker,
   setMapRef,
-  zoom = 13
+  zoom = 13,
+  // Additional properties
+  dragging,
+  doubleClickZoom,
+  scrollWheelZoom,
+  touchZoom,
+  zoomControl
 }: MapComponentViewProps) => {
   const [dimensions, setDimensions] = useState({ height: 0, width: 0 });
   const [combinedMapMarkers, setCombinedMapMarkers] = useState([]);
@@ -114,6 +126,11 @@ const MapComponentView: React.FC<MapComponentViewProps> = ({
                 }}
                 maxZoom={17}
                 zoom={zoom}
+				dragging={dragging}
+				doubleClickZoom={doubleClickZoom}
+				scrollWheelZoom={scrollWheelZoom}
+				touchZoom={touchZoom}
+				zoomControl={zoomControl}
                 style={{ width: "100%", height: dimensions.height }}
               >
                 <MapLayers mapLayers={mapLayers} />

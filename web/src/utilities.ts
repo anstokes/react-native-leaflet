@@ -1,5 +1,4 @@
 import L, { DivIcon } from "leaflet";
-import base64Image from "./webBase64Image";
 import { MapMarker, MapMarkerAnimation } from "./models";
 import { Point } from "react-leaflet";
 
@@ -51,14 +50,10 @@ const getIconFromEmojiOrImageOrSVG = (icon: any, size: Point) => {
     return ` <div style='font-size: ${Math.max(size[0], size[1])}px'>
 ${icon}
 </div>`;
-  } else if (icon.includes("//") && icon.includes("http")) {
+  } else if ((icon.includes("//") && icon.includes("http")) || icon.includes("base64")) {
     //@ts-ignore
 
     return `<img src="${icon}" style="width:${size[0]}px;height:${size[1]}px;">`;
-  } else if (icon.includes("base64")) {
-    //@ts-ignore
-
-    return `<img src="${base64Image}" style="width:${size[0]}px;height:${size[1]}px;">`;
   } else {
     return `<div style='font-size: ${Math.max(
       //@ts-ignore
