@@ -88,6 +88,10 @@ export default class MapComponent extends Component<{}, State> {
       this.loadMockData();
     }
   };
+  
+  componentWillUnmount = () => {
+    this.removeEventListeners();	  
+  }
 
   componentDidUpdate = (prevProps: any, prevState: State) => {
     const { mapRef } = this.state;
@@ -134,6 +138,15 @@ export default class MapComponent extends Component<{}, State> {
       });
       return;
     }
+  };
+  
+  private removeEventListeners = () => {
+    if (document) {
+      document.removeEventListener("message", this.handleMessage);
+    }
+    if (window) {
+      window.removeEventListener("message", this.handleMessage);
+    }	
   };
 
   private handleMessage = (event: any & { data: State }) => {
