@@ -25,7 +25,8 @@ interface MapComponentViewProps {
   doubleClickZoom: boolean;
   scrollWheelZoom: boolean;
   touchZoom: boolean;
-  zoomControl: boolean;  
+  zoomControl: boolean;
+  useMarkerClustering: boolean;
 }
 
 const MapComponentView: React.FC<MapComponentViewProps> = ({
@@ -44,7 +45,8 @@ const MapComponentView: React.FC<MapComponentViewProps> = ({
   doubleClickZoom,
   scrollWheelZoom,
   touchZoom,
-  zoomControl
+  zoomControl,
+  useMarkerClustering
 }: MapComponentViewProps) => {
   const [dimensions, setDimensions] = useState({ height: 0, width: 0 });
   const [combinedMapMarkers, setCombinedMapMarkers] = useState([]);
@@ -137,6 +139,7 @@ const MapComponentView: React.FC<MapComponentViewProps> = ({
                 <MapMarkers
                   mapMarkers={combinedMapMarkers}
                   onMapEvent={onMapEvent}
+				  useMarkerClustering={useMarkerClustering}
                 />
                 <MapShapes mapShapes={mapShapes} onMapEvent={onMapEvent} />
               </Map>

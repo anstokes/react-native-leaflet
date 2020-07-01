@@ -34,6 +34,8 @@ export interface WebViewLeafletProps {
   mapCenterPosition?: LatLng;
   ownPositionMarker?: OwnPositionMarker;
   zoom?: number;
+  autoZoom?: any;
+  useMarkerClustering?: boolean;
   dragging?: boolean;
   doubleClickZoom?: boolean;
   scrollWheelZoom?: boolean;
@@ -100,6 +102,8 @@ class WebViewLeaflet extends React.Component<WebViewLeafletProps, State> {
       mapShapes,
       ownPositionMarker,
       zoom,
+	  autoZoom,
+	  useMarkerClustering,
 	  dragging,
 	  doubleClickZoom,
 	  scrollWheelZoom,
@@ -128,6 +132,12 @@ class WebViewLeaflet extends React.Component<WebViewLeafletProps, State> {
     if (zoom !== prevProps.zoom) {
       this.sendMessage({ zoom });
     }
+	if (!isEqual(autoZoom, prevProps.autoZoom)) {
+	  this.sendMessage({ autoZoom });
+	}
+	if (useMarkerClustering !== prevProps.useMarkerClustering) {
+	  this.sendMessage({ useMarkerClustering });	
+	}
     if (dragging !== prevProps.dragging) {
       this.sendMessage({ dragging });
     }
@@ -195,7 +205,8 @@ class WebViewLeaflet extends React.Component<WebViewLeafletProps, State> {
       mapCenterPosition,
       ownPositionMarker,
       zoom = 7,
-	  // Additional properties
+	  autoZoom,
+	  useMarkerClustering,
 	  dragging,
 	  doubleClickZoom,
 	  scrollWheelZoom,
@@ -222,8 +233,10 @@ class WebViewLeaflet extends React.Component<WebViewLeafletProps, State> {
     }
 
     startupMessage.zoom = zoom;
+	startupMessage.autoZoom = autoZoom;
 	
-	// Additional properties
+	startupMessage.useMarkerClustering = useMarkerClustering;
+	
 	startupMessage.dragging = dragging;
 	startupMessage.doubleClickZoom = doubleClickZoom;
 	startupMessage.scrollWheelZoom = scrollWheelZoom;

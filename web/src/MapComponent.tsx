@@ -22,7 +22,9 @@ import {
 } from "./models";
 import "./styles/markers.css";
 import "./styles/markerAnimations.css";
-import { LatLng } from "react-leaflet";
+import * as ReactLeaflet from "react-leaflet";
+type LatLng = ReactLeaflet.LatLng;
+type LatLngBounds = ReactLeaflet.LatLngBounds;
 
 export const SHOW_DEBUG_INFORMATION = false;
 const ENABLE_BROWSER_TESTING = false;
@@ -38,6 +40,8 @@ interface State {
   ownPositionMarker: MapMarker;
   mapRef: any;
   zoom: number;
+  autoZoom: boolean;
+  useMarkerClustering: boolean;
   // Additional properties
   dragging: boolean;
   doubleClickZoom: boolean;
@@ -62,6 +66,9 @@ export default class MapComponent extends Component<{}, State> {
       mapRef: null,
       ownPositionMarker: null,
       zoom: props.zoom ?? 6,
+	  // Additional properties; disabled by default
+	  autoZoom: props.autoZoom ?? false,
+	  useMarkerClustering: props.useMarkerClustering ?? false,
       // Additional properties; enabled by default
       dragging: props.dragging ?? true,
       doubleClickZoom: props.doubleClickZoom ?? true,
@@ -90,7 +97,7 @@ export default class MapComponent extends Component<{}, State> {
   };
   
   componentWillUnmount = () => {
-    this.removeEventListeners();	  
+    this.removeEventListeners();
   }
 
   componentDidUpdate = (prevProps: any, prevState: State) => {
@@ -100,18 +107,18 @@ export default class MapComponent extends Component<{}, State> {
       this.sendMessage({
         msg: WebViewLeafletEvents.MAP_READY
       });
+	  this.fitMapBounds();
     }
+	if (this.props != prevProps) {
+	  //console.log('Props changed; perhaps operating in React Native Web');
+	  this.propsToState(prevProps);
+	}
   };
 
   private addDebugMessage = (msg: any) => {
     if (typeof msg === "object") {
-      this.addDebugMessage("STRINGIFIED");
-      this.setState({
-        debugMessages: [
-          ...this.state.debugMessages,
-          JSON.stringify(msg, null, 4)
-        ]
-      });
+      //this.addDebugMessage("STRINGIFIED:");
+      this.setState({ debugMessages: [...this.state.debugMessages, JSON.stringify(msg, null, 4)] });
     } else {
       this.setState({ debugMessages: [...this.state.debugMessages, msg] });
     }
@@ -165,7 +172,7 @@ export default class MapComponent extends Component<{}, State> {
 		  this.state.mapRef.leafletElement.removeControl( this.state.mapRef.leafletElement.zoomControl );
 		}
       }
-      this.setState({ ...this.state, ...event.data });
+      this.setState({ ...this.state, ...event.data }, this.fitMapBounds);
     } catch (error) {
       this.addDebugMessage({ error: JSON.stringify(error) });
     }
@@ -178,6 +185,9 @@ export default class MapComponent extends Component<{}, State> {
       window.ReactNativeWebView.postMessage(JSON.stringify(message));
       console.log("sendMessage  ", JSON.stringify(message));
     }
+	if (typeof this.state.onMessageReceived === 'function') {
+	  this.state.onMessageReceived(message);	
+	}	
   };
 
   private loadMockData = () => {
@@ -200,6 +210,41 @@ export default class MapComponent extends Component<{}, State> {
       }
     });
   };
+  
+  private propsToState = (prevProps: any) => {
+	// List of properties which are transfered to state
+	const currentProps = JSON.parse(JSON.stringify(this.props));
+    const stateProps = ['mapCenterPosition', 'mapLayers', 'mapMarkers', 'mapShapes', 'zoom', 'autoZoom', 'useMarkerClustering', 'dragging', 'doubleClickZoom', 'scrollWheelZoom', 'touchZoom', 'zoomControl', 'onMessageReceived'];
+	// Define new state
+	var newState: { [key: string]: any } = {};
+	for (var i in stateProps) {
+	 var propName = stateProps[i];
+	 // Check if propery has changed
+	 if (currentProps[propName] != prevProps[propName]) {
+	  // Apply change to state
+	  newState[propName] = currentProps[propName];
+	 }
+	}
+	
+	// Save state and zoom to new bounds
+	this.setState({...this.state, ...newState}, this.fitMapBounds);
+  }	  
+  
+  private fitMapBounds = () => {
+	const { autoZoom, mapMarkers, mapRef } = this.state;
+	if ( autoZoom && mapMarkers && mapRef ) {
+      const map = mapRef.leafletElement;
+
+      // Loop through markers
+	  const markersBounds:LatLngBounds = [mapMarkers[0].position];
+	  mapMarkers.forEach((marker) => {
+		  markersBounds.push(marker.position);
+	  });
+	  
+	  // Fit the map with to the markers bounds
+	  map.flyToBounds(markersBounds, this.state.autoZoom);
+    }
+  };
 
   private onMapEvent = (
     webViewLeafletEvent: WebViewLeafletEvents,
@@ -218,9 +263,6 @@ export default class MapComponent extends Component<{}, State> {
         zoom: this.state.mapRef.leafletElement?.getZoom()
       };
     }
-	if (typeof this.state.onMessageReceived === 'function') {
-	  this.state.onMessageReceived({ event: webViewLeafletEvent, payload });	
-	}
     this.sendMessage({ event: webViewLeafletEvent, payload });
   };
 
@@ -229,7 +271,7 @@ export default class MapComponent extends Component<{}, State> {
       this.setState({ mapRef });
     }
   };
-
+  
   render() {
     const {
       debugMessages,
@@ -239,6 +281,8 @@ export default class MapComponent extends Component<{}, State> {
       mapShapes,
       ownPositionMarker,
       zoom,
+	  autoZoom,
+	  useMarkerClustering,
 	  dragging,
 	  doubleClickZoom,
 	  scrollWheelZoom,
@@ -261,7 +305,8 @@ export default class MapComponent extends Component<{}, State> {
 		doubleClickZoom={doubleClickZoom}
 		scrollWheelZoom={scrollWheelZoom}
 		touchZoom={touchZoom}
-		zoomControl={this.state.zoomControl}
+		zoomControl={zoomControl}
+		useMarkerClustering={useMarkerClustering}
       />
     );
   }
