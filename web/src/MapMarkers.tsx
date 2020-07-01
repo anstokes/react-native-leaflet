@@ -66,7 +66,10 @@ export default class MapMarkers extends React.Component<MapMarkersProps> {
       return (
         <LayerGroup>
           {mapMarkers.map((mapMarker: MapMarker) => {
-            return <this.MapMarker mapMarker={mapMarker} />;
+            return <this.MapMarker
+                     key={mapMarker.id || Math.random().toString()}
+                     mapMarker={mapMarker}
+                   />;
           })}
         </LayerGroup>
       );

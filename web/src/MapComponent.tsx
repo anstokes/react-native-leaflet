@@ -109,7 +109,7 @@ export default class MapComponent extends Component<{}, State> {
       });
 	  this.fitMapBounds();
     }
-	if (this.props != prevProps) {
+	if (this.props !== prevProps) {
 	  //console.log('Props changed; perhaps operating in React Native Web');
 	  this.propsToState(prevProps);
 	}
@@ -219,8 +219,8 @@ export default class MapComponent extends Component<{}, State> {
 	var newState: { [key: string]: any } = {};
 	for (var i in stateProps) {
 	 var propName = stateProps[i];
-	 // Check if propery has changed
-	 if (currentProps[propName] != prevProps[propName]) {
+	 // Check if property has changed
+	 if (currentProps[propName] !== prevProps[propName]) {
 	  // Apply change to state
 	  newState[propName] = currentProps[propName];
 	 }
@@ -281,7 +281,6 @@ export default class MapComponent extends Component<{}, State> {
       mapShapes,
       ownPositionMarker,
       zoom,
-	  autoZoom,
 	  useMarkerClustering,
 	  dragging,
 	  doubleClickZoom,
