@@ -1,3 +1,5 @@
 node_modules
 /web/dist
 /web/build
+/yarn.lock
+/yarn-error.log
