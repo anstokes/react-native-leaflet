@@ -29,7 +29,7 @@
     "react-leaflet": "^2.6.1",
     "react-leaflet-markercluster": "^2.0.0",
     "react-measure": "^2.3.0",
-    "react-native-webview": "^8.0.3"
+    "react-native-webview": ">=11.0.0"
   },
   "peerDependencies": {
     "react": "^16.9.0",
